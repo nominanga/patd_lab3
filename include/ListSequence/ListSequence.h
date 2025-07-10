@@ -22,8 +22,8 @@ protected:
         return this;
     }
 
-    Sequence<T>* InsertAtInternal(int index, T item) override {
-        data->InsertAt(index, item);
+    Sequence<T>* InsertAtInternal(T item, int index) override {
+        data->InsertAt(item, index);
         return this;
     }
 
@@ -93,8 +93,8 @@ public:
         return Instance()->PrependInternal(item);
     }
 
-    Sequence<T>* InsertAt(T index, T item) override {
-        return Instance()->InsertAtInternal(index, item);
+    Sequence<T>* InsertAt(T item, int index) override {
+        return Instance()->InsertAtInternal(item, index);
     }
 
     Sequence<T>* GetSubsequence(int startindex, int endindex) override {

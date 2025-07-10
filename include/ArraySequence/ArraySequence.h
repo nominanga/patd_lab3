@@ -39,6 +39,28 @@ protected:
         return this;
     }
 
+    Sequence<T>* RemoveLastInternal() {
+        int size = data->GetSize();
+        if (size == 0) {
+            throw std::out_of_range("Sequence is empty");
+        }
+        data->Resize(size - 1);
+        return this;
+    }
+
+    Sequence<T>* RemoveFirstInternal() {
+        int size = data->GetSize();
+        if (size == 0) {
+            throw std::out_of_range("Sequence is empty");
+        }
+        for (int i = 1; i < size; i++) {
+            T next = data->Get(i);
+            data->Set(i - 1, next);
+        }
+        data->Resize(size - 1);
+        return this;
+    }
+
     Sequence<T>* Clone() override {
         return new ArraySequence<T>(*this);
     }
@@ -78,6 +100,14 @@ public:
 
     Sequence<T>* Append(T item) override {
         return Instance()->AppendInternal(item);
+    }
+
+    Sequence<T>* RemoveLast() {
+        return Instance()->RemoveLastInternal();
+    }
+
+    Sequence<T>* RemoveFirst() {
+        return Instance()->RemoveFirstInternal();
     }
 
     Sequence<T>* Prepend(T item) override {

@@ -23,4 +23,9 @@ public:
     virtual Sequence<T>* PrependInternal(T item) = 0;
     virtual Sequence<T>* InsertAtInternal(T item, int index) = 0;
     virtual Sequence<T>* Clone() = 0;
+
+    virtual Sequence<T>* RemoveLastInternal() = 0;
+    virtual Sequence<T>* RemoveFirstInternal() = 0;
+    virtual Sequence<T>* RemoveFirst() = 0;
+    virtual Sequence<T>* RemoveLast() = 0;
 };

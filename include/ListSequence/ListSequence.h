@@ -31,6 +31,21 @@ protected:
         return new ListSequence<T>(*this);
     }
 
+    // simple plug methods to compile it
+    Sequence<T>* RemoveLastInternal() override {
+        return this;
+    }
+    Sequence<T>* RemoveFirstInternal() override {
+        return this;
+    }
+    Sequence<T>* RemoveLast() override {
+        return this;
+    }
+    Sequence<T>* RemoveFirst() override {
+        return this;
+    }
+    // end of plugs
+
     void ReplaceData(LinkedList<T>* newList) {
         delete data;
         data = newList;

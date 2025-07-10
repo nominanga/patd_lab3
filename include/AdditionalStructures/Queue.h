@@ -34,4 +34,10 @@ public:
     T Front() const {
         return data->GetFirst();
     }
+
+    void Clear() {
+        while (!IsEmpty()) {
+            data->RemoveLast();
+        }
+    }
 };

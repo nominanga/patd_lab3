@@ -48,4 +48,10 @@ public:
     T Back() const {
         return data->GetLast();
     }
+
+    void Clear() {
+        while (!IsEmpty()) {
+            data->RemoveLast();
+        }
+    }
 };

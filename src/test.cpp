@@ -1,137 +1,124 @@
 #include <iostream>
 #include <cassert>
-#include "../include/ArraySequence/Immutable/ImmutableArraySequence.h"
-#include "../include/ArraySequence/Mutable/MutableArraySequence.h"
-#include "../include/ListSequence/Immutable/ImmutableListSequence.h"
-#include "../include/ListSequence/Mutable/MutableListSequence.h"
+#include "Queue.h"
+#include "Stack.h"
+#include "Deque.h"
 
-template<typename T>
-void printSequence(const Sequence<T>* seq) {
-    for (int i = 0; i < seq->GetLength(); ++i) {
-        std::cout << seq->Get(i) << " ";
+
+void TestStack() {
+    Stack<int> stack;
+    try {
+        stack.Pop();
+        assert(false);
+    } catch (const std::out_of_range& e) {
+        std::cout << "Caught expected error: " << e.what() << "\n";
     }
-    std::cout << "\n";
+    stack.Push(10);
+    stack.Push(20);
+    stack.Push(30);
+
+    assert(stack.Size() == 3);
+    assert(stack.Pop() == 30);
+    assert(stack.Size() == 2);
+    assert(stack.Peek() == 20);
+
+    stack.Push(30);
+    while (!stack.IsEmpty()) {
+        std::cout << stack.Pop() << " ";
+    }
+    std::cout << std::endl;
+    assert(stack.IsEmpty());
+    stack.Push(10);
+    stack.Clear();
+    assert(stack.IsEmpty());
 }
 
-void TestMutableArraySequence() {
-    int numbers[5] = {1, 2, 3, 4, 5};
-    auto* seq = new MutableArraySequence<int>(numbers, 5);
-    printSequence(seq);
-    assert(seq->GetLength() == 5);
-    assert(seq->GetFirst() == 1);
-    assert(seq->GetLast() == 5);
-    assert(seq->Get(2) == 3);
-
+void TestQueue() {
+    Queue<int> queue;
     try {
-        seq->Get(1000);
+        queue.Dequeue();
         assert(false);
     } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
+        std::cout << "Caught expected error: " << e.what() << "\n";
     }
+    queue.Enqueue(10);
+    queue.Enqueue(20);
+    queue.Enqueue(30);
 
-    seq->Append(6);
-    assert(seq->GetLength() == 6);
-    assert(seq->GetLast() == 6);
+    assert(queue.Size() == 3);
+    assert(queue.Front() == 10);
 
-    seq->Prepend(0);
-    assert(seq->GetLength() == 7);
-    assert(seq->GetFirst() == 0);
-
-    seq->InsertAt(999, 4);
-    assert(seq->GetLength() == 8);
-    assert(seq->Get(4) == 999);
-
-    try {
-        seq->InsertAt(1000, 1000);
-        assert(false);
-    } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
+    while (!queue.IsEmpty()) {
+        std::cout << queue.Dequeue() << " ";
     }
+    std::cout << std::endl;
 
-    auto* subSeq = seq->GetSubsequence(0, 1);
-    assert(subSeq->GetLength() == 2);
-    assert(subSeq->GetFirst() == seq->GetFirst());
-    assert(subSeq->GetLast() == seq->Get(1));
+    int value = 42;
+    queue.Enqueue(value);
+    assert(queue.Dequeue() == value);
 
-    try {
-        seq->GetSubsequence(1000, 1000);
-        assert(false);
-    } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
-    }
-
-    auto* concatSeq = seq->Concat(subSeq);
-    assert(concatSeq->GetLength() == subSeq->GetLength() + seq->GetLength());
-    assert(concatSeq->GetFirst() == seq->GetFirst());
-    assert(concatSeq->GetLast() == subSeq->GetLast());
-
-    delete seq;
-    delete subSeq;
-    delete concatSeq;
+    assert(queue.IsEmpty());
+    queue.Enqueue(value);
+    queue.Clear();
+    assert(queue.IsEmpty());
 }
 
-void TestImmutableListSequence() {
-    int numbers[5] = {1, 2, 3, 4, 5};
-    auto* seq = new ImmutableListSequence<int>(numbers, 5);
-    printSequence(seq);
-
-
-    assert(seq->GetLength() == 5);
-    assert(seq->GetFirst() == 1);
-    assert(seq->GetLast() == 5);
-    assert(seq->Get(2) == 3);
-
+void TestDeque() {
+    Deque<int> deque;
     try {
-        seq->Get(1000);
+        deque.PopBack();
         assert(false);
     } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
+        std::cout << "Caught expected error: " << e.what() << "\n";
     }
-
-    auto* appended = seq->Append(6);
-    assert(appended->GetLength() == 6);
-    assert(appended->GetLast() == 6);
-
-    auto* prepended = appended->Prepend(0);
-    assert(prepended->GetLength() == 7);
-    assert(prepended->GetFirst() == 0);
-
-    auto* inserted = prepended->InsertAt(999, 4);
-    assert(inserted->GetLength() == 8);
-    assert(inserted->Get(4) == 999);
 
     try {
-        seq->InsertAt(1000, 1000);
+        deque.PopFront();
         assert(false);
     } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
+        std::cout << "Caught expected error: " << e.what() << "\n";
     }
 
-    auto* subSeq = inserted->GetSubsequence(0, 1);
-    assert(subSeq->GetLength() == 2);
-    assert(subSeq->GetFirst() == inserted->GetFirst());
-    assert(subSeq->GetLast() == inserted->Get(1));
+    deque.PushBack(10);
+    deque.PushBack(20);
+    deque.PushBack(30);
 
-    try {
-        seq->GetSubsequence(1000, 1000);
-        assert(false);
-    } catch (const std::out_of_range& e) {
-        std::cout << "Caught expected exception: " << e.what() << std::endl;
+    assert(deque.Size() == 3);
+    assert(deque.Front() == 10);
+    assert(deque.Back() == 30);
+
+    deque.PushFront(5);
+    deque.PushFront(0);
+
+    assert(deque.Size() == 5);
+    assert(deque.Front() == 0);
+
+    while (!deque.IsEmpty()) {
+        std::cout << deque.PopFront() << " ";
     }
+    std::cout << std::endl;
 
-    auto* concatSeq = inserted->Concat(subSeq);
-    assert(concatSeq->GetLength() == inserted->GetLength() + subSeq->GetLength());
-    assert(concatSeq->GetFirst() == inserted->GetFirst());
-    assert(concatSeq->GetLast() == subSeq->GetLast());
+    deque.PushBack(10);
+    deque.PushBack(20);
+    deque.PushBack(30);
+    deque.PushFront(5);
+    deque.PushFront(0);
 
-    delete seq;
-    delete subSeq;
-    delete concatSeq;
+    assert(deque.PopBack() == 30);
+    assert(deque.PopFront() == 0);
+    assert(deque.Size() == 3);
+
+    deque.Clear();
+    assert(deque.IsEmpty());
+
 }
+
 
 int main() {
-    TestMutableArraySequence();
-    std::cout << "Passed all tests for MutableArraySequence" << "\n\n";
-    TestImmutableListSequence();
-    std::cout << "Passed all tests for ImmutableListSequence" << std::endl;
+    TestStack();
+    std::cout << "Stack passed all tests" << std::endl;
+    TestQueue();
+    std::cout << "Queue passed all tests" << std::endl;
+    TestDeque();
+    std::cout << "Deque passed all tests" << std::endl;
 }

@@ -1,168 +1,175 @@
 #include <iostream>
-#include "../include/ArraySequence/Immutable/ImmutableArraySequence.h"
-#include "../include/ArraySequence/Mutable/MutableArraySequence.h"
-#include "../include/ListSequence/Immutable/ImmutableListSequence.h"
-#include "../include/ListSequence/Mutable/MutableListSequence.h"
+#include "Queue.h"
+#include "Stack.h"
+#include "Deque.h"
 
+void dequeMenu() {
+    std::cout << "Deque:" << std::endl;
+    std::cout << "0. Exit" << std::endl;
+    std::cout << "1. PushFront" << std::endl;
+    std::cout << "2. Front" << std::endl;
+    std::cout << "3. PopFront" << std::endl;
+    std::cout << "4. PushBack" << std::endl;
+    std::cout << "5. Back" << std::endl;
+    std::cout << "6. PopBack" << std::endl;
+    std::cout << "7. Clear" << std::endl;
+    std::cout << "8. Size" << std::endl;
+}
 
-void printSequence(const Sequence<int>* seq) {
-    for (int i = 0; i < seq->GetLength(); ++i) {
-        std::cout << seq->Get(i) << " ";
+void queueMenu() {
+    std::cout << "Queue:" << std::endl;
+    std::cout << "0. Exit" << std::endl;
+    std::cout << "1. Enqueue" << std::endl;
+    std::cout << "2. Front" << std::endl;
+    std::cout << "3. Dequeue" << std::endl;
+    std::cout << "4. Clear" << std::endl;
+    std::cout << "5. Size" << std::endl;
+
+}
+
+void stackMenu() {
+    std::cout << "Stack:" << std::endl;
+    std::cout << "0. Exit" << std::endl;
+    std::cout << "1. Push" << std::endl;
+    std::cout << "2. Peek" << std::endl;
+    std::cout << "3. Pop" << std::endl;
+    std::cout << "4. Clear" << std::endl;
+    std::cout << "5. Size" << std::endl;
+}
+
+void dequeRun() {
+    Deque<int> deque;
+    dequeMenu();
+    int choice;
+    while (std::cin >> choice && choice != 0) {
+        int value;
+        switch (choice) {
+            case 1:
+                std::cout << "Enter an integer: ";
+                std::cin >> value;
+                deque.PushFront(value);
+                break;
+            case 2:
+                std::cout << "Front: " << deque.Front() << std::endl;
+                break;
+            case 3:
+                std::cout << "PopFront: " << deque.PopFront() << std::endl;
+                break;
+            case 4:
+                std::cout << "Enter an integer: ";
+                std::cin >> value;
+                deque.PushBack(value);
+                break;
+            case 5:
+                std::cout << "Back: " << deque.Back() << std::endl;
+                break;
+            case 6:
+                std::cout << "PopBack: " << deque.PopBack() << std::endl;
+                break;
+            case 7:
+                std::cout << "Clearing\n";
+                deque.Clear();
+                break;
+            case 8:
+                std::cout << "Size: " << deque.Size() << std::endl;
+                break;
+            default:
+                std::cout << "Invalid choice" << std::endl;
+        }
+        dequeMenu();
     }
-    std::cout << "\n";
 }
 
-void append(Sequence<int>* seq, int value, bool isMutable) {
-    if (isMutable) {
-        seq->Append(value);
-        printSequence(seq);
-    }
-    else {
-        auto* newSeq = seq->Append(value);
-        printSequence(newSeq);
-        delete newSeq;
-    }
-}
-
-void prepend(Sequence<int>* seq, int value, bool isMutable) {
-    if (isMutable) {
-        seq->Prepend(value);
-        printSequence(seq);
-    }
-    else {
-        auto* newSeq = seq->Prepend(value);
-        printSequence(newSeq);
-        delete newSeq;
-    }
-}
-
-void insert(Sequence<int>* seq, int value, int index, bool isMutable) {
-    if (isMutable) {
-        seq->InsertAt(value, index);
-        printSequence(seq);
-    }
-    else {
-        auto* newSeq = seq->InsertAt(value, index);
-        printSequence(newSeq);
-        delete newSeq;
+void queueRun() {
+    Queue<int> queue;
+    queueMenu();
+    int choice;
+    while (std::cin >> choice && choice != 0) {
+        int value;
+        switch (choice) {
+            case 1:
+                std::cout << "Enter an integer: ";
+                std::cin >> value;
+                queue.Enqueue(value);
+                break;
+            case 2:
+                std::cout << "Front: " << queue.Front() << std::endl;
+                break;
+            case 3:
+                std::cout << "Dequeue: " << queue.Dequeue() << std::endl;
+                break;
+            case 4:
+                std::cout << "Clearing\n" << std::endl;
+                queue.Clear();
+                break;
+            case 5:
+                std::cout << "Size: " << queue.Size() << std::endl;
+                break;
+            default:
+                std::cout << "Invalid choice" << std::endl;
+        }
+        queueMenu();
     }
 }
 
-void get(Sequence<int>* seq, int index) {
-    std::cout << seq->Get(index) << "\n";
+void stackRun() {
+    Stack<int> stack;
+    stackMenu();
+    int choice;
+    while (std::cin >> choice && choice != 0) {
+        int value;
+        switch (choice) {
+            case 1:
+                std::cout << "Enter an integer: ";
+                std::cin >> value;
+                stack.Push(value);
+                break;
+            case 2:
+                std::cout << "Peek: " << stack.Peek() << std::endl;
+                break;
+            case 3:
+                std::cout << "Pop: " << stack.Pop() << std::endl;
+                break;
+            case 4:
+                std::cout << "Clearing\n";
+                stack.Clear();
+                break;
+            case 5:
+                std::cout << "Size: " << stack.Size() << std::endl;
+                break;
+            default:
+                std::cout << "Invalid choice" << std::endl;
+        }
+        stackMenu();
+    }
 }
 
-void getSub(Sequence<int>* seq, int start, int end) {
-    auto* subbed = seq->GetSubsequence(start, end);
-    printSequence(subbed);
-    delete subbed;
-}
 
-void concat(Sequence<int>* seq1, Sequence<int>* seq2) {
-    auto* concated = seq1->Concat(seq2);
-    printSequence(concated);
-    delete concated;
-}
-
-void printSequenceActions() {
-    std::cout << "1. Append" << std::endl;
-    std::cout << "2. Prepend" << std::endl;
-    std::cout << "3. Insert" << std::endl;
-    std::cout << "4. Get" << std::endl;
-    std::cout << "5. GetSubSequence" << std::endl;
-    std::cout << "6. Concat with 1,2,3" << std::endl;
-    std::cout << "7. Output" << std::endl;
-    std::cout << "8. Exit" << std::endl;
-}
-
-void printSequenceChoices() {
-    std::cout << "Choose sequence to create:" << std::endl;
-    std::cout << "1. Mutable array" << std::endl;
-    std::cout << "2. Immutable array" << std::endl;
-    std::cout << "3. Mutable list" << std::endl;
-    std::cout << "4. Immutable list" << std::endl;
-}
 
 
 int main() {
-    int seqChoice;
-    Sequence<int>* seq = nullptr;
-    Sequence<int>* seqForConcat = nullptr;
-    int values[3] = {1, 2, 3};
-    bool isMutable;
-    printSequenceChoices();
-    std::cin >> seqChoice;
-    switch (seqChoice) {
+    std::cout << "Choose structure: " << std::endl;
+    std::cout << "1. Queue" << std::endl;
+    std::cout << "2. Stack" << std::endl;
+    std::cout << "3. Deque" << std::endl;
+
+    int choice;
+    std::cin >> choice;
+
+    switch (choice) {
         case 1:
-            seq = new MutableArraySequence<int>();
-            seqForConcat = new MutableArraySequence<int>(values, 3);
-            isMutable = true;
+            queueRun();
             break;
         case 2:
-            seq = new ImmutableArraySequence<int>();
-            seqForConcat = new ImmutableArraySequence<int>(values, 3);
-            isMutable = false;
+            stackRun();
             break;
         case 3:
-            seq = new MutableListSequence<int>();
-            seqForConcat = new MutableListSequence<int>(values, 3);
-            isMutable = true;
-            break;
-        case 4:
-            seq = new ImmutableListSequence<int>();
-            seqForConcat = new ImmutableListSequence<int>(values, 3);
-            isMutable = false;
+            dequeRun();
             break;
         default:
-            return 1;
-
-    }
-    int choice;
-    printSequenceActions();
-    while (std::cin >> choice && choice != 8) {
-        int value;
-        int index;
-        int end;
-        switch (choice) {
-            case 1:
-                std::cout << "Enter value to append: ";
-                std::cin >> value;
-                append(seq, value, isMutable);
-                break;
-            case 2:
-                std::cout << "Enter value to prepend: ";
-                std::cin >> value;
-                prepend(seq, value, isMutable);
-                break;
-            case 3:
-                std::cout << "Enter pair index/value to insert: ";
-                std::cin >> index >> value;
-                insert(seq, value, index, isMutable);
-                break;
-            case 4:
-                std::cout << "Enter index to get: ";
-                std::cin >> index;
-                get(seq, index);
-                break;
-            case 5:
-                std::cout << "Enter start, end indexes to getSubsequence: ";
-                std::cin >> index >> end;
-                getSub(seq, index, end);
-                break;
-            case 6:
-                concat(seq, seqForConcat);
-                break;
-            case 7:
-                printSequence(seq);
-                break;
-            default:
-                std::cout << "Unknown choice." << std::endl;
-
-        }
-        printSequenceActions();
+            std::cout << "Invalid Choice." << std::endl;
     }
 
-    delete seq;
-    delete seqForConcat;
+
     return 0;
 }

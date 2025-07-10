@@ -19,7 +19,7 @@ set(PROJECT_INCLUDES
 
 include_directories(${PROJECT_INCLUDES})
 
-add_executable(main src/new_main.cpp)
+add_executable(main src/main.cpp)
 target_include_directories(main PRIVATE ${PROJECT_INCLUDES})
 
 add_executable(test src/test.cpp)

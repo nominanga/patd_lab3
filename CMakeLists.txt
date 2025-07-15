@@ -24,3 +24,6 @@ target_include_directories(main PRIVATE ${PROJECT_INCLUDES})
 
 add_executable(test src/test.cpp)
 target_include_directories(test PRIVATE ${PROJECT_INCLUDES})
+
+add_executable(task src/task.cpp)
+target_include_directories(task PRIVATE ${PROJECT_INCLUDES})

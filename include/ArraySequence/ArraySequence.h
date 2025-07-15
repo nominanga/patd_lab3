@@ -178,6 +178,19 @@ public:
         return initial;
     }
 
+    void Sort(bool (*greater)(T, T)) {
+        int n = data->GetSize();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (greater(data->Get(j - 1), data->Get(j))) {
+                    T tmp = data->Get(j - 1);
+                    data->Set(j - 1, data->Get(j));
+                    data->Set(j, tmp);
+                }
+            }
+        }
+    }
+
     static Sequence<T>* From(T* data, int count) {
         return new ArraySequence<T>(data, count);
     }

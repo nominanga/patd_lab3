@@ -13,11 +13,14 @@ protected:
     }
 
     Sequence<T>* AppendInternal(T item) override {
-        int size = data->GetSize();
-        data->Resize(size + 1);
-        data->Set(size, item);
+        InsertAtInternal(item, data->GetSize());
         return this;
     }
+
+    // реализовать монады
+    // решить задачу, список студентов, дисциплин, тройка(студент, дисциплина, оценка)
+    // определить топ 5 студентов с наивысш ср баллом
+    // топ 5 студентов со срденим баллом ниже ср арифм среди студентов сдавшиз все дисциплины матан и физика на 4 и выше
 
     Sequence<T>* PrependInternal(T item) override {
         return InsertAtInternal(item, 0);
@@ -134,5 +137,48 @@ public:
         }
 
         return seq;
+    }
+
+    Sequence<T>* Map(T (*func)(T)) {
+        auto seq = new ArraySequence<T>();
+        for (int i = 0; i < data->GetSize(); i++) {
+            seq->AppendInternal(func(data->Get(i)));
+        }
+        return seq;
+    }
+
+    Sequence<T>* FlatMap(Sequence<T>* (*func)(T)) {
+        auto seq = new ArraySequence<T>();
+        for (int i = 0; i < data->GetSize(); i++) {
+            auto returnedSeq = func(data->Get(i));
+            for (int j = 0; j < returnedSeq->GetLength(); j++) {
+                seq->AppendInternal(returnedSeq->Get(j));
+            }
+            delete returnedSeq;
+        }
+        return seq;
+    }
+
+
+    Sequence<T>* Where(bool (*func)(T)) {
+        auto seq = new ArraySequence<T>();
+        for (int i = 0; i < data->GetSize(); i++) {
+            T value = data->Get(i);
+            if (func(value)) {
+                seq->AppendInternal(value);
+            }
+        }
+        return seq;
+    }
+
+    T Reduce(T (*func)(T, T), T initial) {
+        for (int i = 0; i < data->GetSize(); i++) {
+            initial = func(initial, data->Get(i));
+        }
+        return initial;
+    }
+
+    static Sequence<T>* From(T* data, int count) {
+        return new ArraySequence<T>(data, count);
     }
 };

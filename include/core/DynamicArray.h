@@ -7,23 +7,27 @@ class DynamicArray
 {
     T*data;
     int size;
+    int capacity;
 
 public:
     DynamicArray(int size) : size(size) {
         if (size < 0)
             throw std::invalid_argument("size must be positive");
-        data = new T[size];
+        capacity = size == 0 ? 1 : size * 2;
+        data = new T[capacity];
     }
 
     DynamicArray(T* input, int count) : size(count) {
         if (count < 0)
             throw std::invalid_argument("size must be positive");
-        data = new T[count];
+        capacity = count == 0 ? 1 : count * 2;
+        data = new T[capacity];
         std::copy(input, input + count, data);
     }
 
     DynamicArray(const DynamicArray& other) : size(other.size) {
-        data = new T[size];
+        capacity = other.capacity;
+        data = new T[capacity];
         std::copy(other.data, other.data + size, data);
     }
 
@@ -56,11 +60,17 @@ public:
             throw std::invalid_argument("size must be positive");
         }
 
-        T* new_data = new T[new_size];
-        int elements_to_copy = std::min(size, new_size);
-        std::copy(data, data + elements_to_copy, new_data);
-        delete[] data;
-        data = new_data;
-        size = new_size;
+        if (new_size < capacity) {
+            size = new_size;
+            return;
+        }
+        if (new_size >= capacity) {
+            capacity = new_size * 2;
+            T* new_data = new T[capacity];
+            std::copy(data, data + size, new_data);
+            delete[] data;
+            data = new_data;
+            size = new_size;
+        }
     }
 };

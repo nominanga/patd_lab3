@@ -35,7 +35,7 @@ public:
         delete[] data;
     }
 
-    T Get(int index) {
+    T Get(int index) const {
         if (index < 0 || index >= size) {
             throw std::out_of_range("index out of range");
         }

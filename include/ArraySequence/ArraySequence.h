@@ -1,6 +1,7 @@
 #pragma once
 #include "DynamicArray.h"
 #include "SequenceInterface/Sequence.h"
+#include <functional>
 
 template <typename T>
 class ArraySequence : public Sequence<T> {
@@ -139,52 +140,53 @@ public:
         return seq;
     }
 
-    Sequence<T>* Map(T (*func)(T)) {
-        auto seq = new ArraySequence<T>();
+    template <typename U>
+    ArraySequence<U>* Map(std::function<U(T)> func)  {
+        auto seq = new ArraySequence<U>();
         for (int i = 0; i < data->GetSize(); i++) {
-            seq->AppendInternal(func(data->Get(i)));
+            seq->Append(func(data->Get(i)));
         }
         return seq;
     }
 
-    Sequence<T>* FlatMap(Sequence<T>* (*func)(T)) {
-        auto seq = new ArraySequence<T>();
+    template<typename U>
+    ArraySequence<U>* FlatMap(std::function<ArraySequence(T)> func)  {
+        auto result = new ArraySequence<U>();
         for (int i = 0; i < data->GetSize(); i++) {
-            auto returnedSeq = func(data->Get(i));
-            for (int j = 0; j < returnedSeq->GetLength(); j++) {
-                seq->AppendInternal(returnedSeq->Get(j));
+            auto subSequence = func(data->Get(i));
+            for (int j = 0; j < subSequence->GetLength(); j++) {
+                result->Append(subSequence->Get(j));
             }
-            delete returnedSeq;
+            delete subSequence;
         }
-        return seq;
+        return result;
     }
 
-
-    Sequence<T>* Where(bool (*func)(T)) {
+    ArraySequence<T>* Where(std::function<bool(T)> func)  {
         auto seq = new ArraySequence<T>();
         for (int i = 0; i < data->GetSize(); i++) {
-            T value = data->Get(i);
-            if (func(value)) {
-                seq->AppendInternal(value);
+            if (T value = data->Get(i); func(value)) {
+                seq->Append(value);
             }
         }
         return seq;
     }
 
-    T Reduce(T (*func)(T, T), T initial) {
+    template<typename U>
+    U Reduce(std::function<U(U, T)> func, U initial) {
         for (int i = 0; i < data->GetSize(); i++) {
             initial = func(initial, data->Get(i));
         }
         return initial;
     }
 
-    void Sort(bool (*greater)(T, T)) {
+    void Sort(std::function<bool(T, T)> comparator) {
         int n = data->GetSize();
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
-                if (greater(data->Get(j - 1), data->Get(j))) {
-                    T tmp = data->Get(j - 1);
-                    data->Set(j - 1, data->Get(j));
+                if (comparator(data->Get(i), data->Get(j))) {
+                    T tmp = data->Get(i);
+                    data->Set(i, data->Get(j));
                     data->Set(j, tmp);
                 }
             }

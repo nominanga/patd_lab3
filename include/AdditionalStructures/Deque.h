@@ -33,7 +33,7 @@ public:
         return value;
     }
 
-    bool IsEmpty() const {
+    const bool IsEmpty() const {
         return data->GetLength() == 0;
     }
 

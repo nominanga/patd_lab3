@@ -28,4 +28,5 @@ public:
     virtual Sequence<T>* RemoveFirstInternal() = 0;
     virtual Sequence<T>* RemoveFirst() = 0;
     virtual Sequence<T>* RemoveLast() = 0;
+
 };

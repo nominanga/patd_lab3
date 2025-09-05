@@ -3,12 +3,12 @@
 
 #include "MutableArraySequence.h"
 
-template <typename T>
-void printSequence(Sequence<T>* seq) {
-    for (int i = 0; i < seq->GetLength(); i++) {
-        std::cout << seq->Get(i) << std::endl;
-    }
-}
+// template <typename T>
+// void printSequence(Sequence<T>* seq) {
+//     for (int i = 0; i < seq->GetLength(); i++) {
+//         std::cout << seq->Get(i) << std::endl;
+//     }
+// }
 
 struct StudentMark {
     std::string name;
@@ -23,12 +23,11 @@ struct StudentMark {
 
 };
 
-int main() {
-    auto* marks = new MutableArraySequence<StudentMark>();
-    auto* students = new MutableArraySequence<std::string>();
-    // Математический анализ, Физика, Информатика, Линейная алгебра, Теория графов
-    // Игнат, Борис, Моисей, Леонид, Олег, Игорь, Степан, Адам, Константин, Илья
-
+void fillSequences(
+    MutableArraySequence<StudentMark>* marks,
+    MutableArraySequence<std::string>* students
+    )
+{
     students->Append("Игнат");
     students->Append("Борис");
     students->Append("Моисей");
@@ -99,33 +98,51 @@ int main() {
     marks->Append(StudentMark("Илья", "Информатика", 4));
     marks->Append(StudentMark("Илья", "Линейная алгебра", 4));
     marks->Append(StudentMark("Илья", "Теория графов", 3));
+}
 
-
-    auto studentAverageMarks = students->Map<std::pair<std::string, double>>(
-        [marks](const std::string& name) {
-        auto* marksByStudent = marks->Where(
-            [name](const StudentMark& mark_info) {
-            return mark_info.name == name;
-        });
-        double mark = static_cast<double>(marksByStudent->Reduce<int>(
-            [](int result, const StudentMark& current_mark) {
-            return current_mark.mark + result;
-        }, 0)) / marksByStudent->GetLength();
-        auto studentAverageMark = std::make_pair(name, mark);
-        delete marksByStudent;
-        return studentAverageMark;
-    });
-
-    studentAverageMarks->Sort([](const std::pair<std::string, double>& a, const std::pair<std::string, double>& b) {
-        return a.second < b.second;
-    });
-
-    std::cout << "Топ 5 студентов с наивысшым средним баллом:" << std::endl;
+void printTopStudentsWithAverageMarks(
+    const std::string& message,
+    const ArraySequence<std::pair<std::string, double>> *studentAverageMarks
+    ) {
+    std::cout << message << std::endl;
     for (int i = 0; i < 5; i++) {
         auto mark = studentAverageMarks->Get(i);
         std::cout << mark.first << " (" << mark.second << ")" << std::endl;
     }
+    std::cout << std::endl;
+}
 
+ArraySequence<std::pair<std::string, double>>* getStudentAverageMarksSorted(
+    const MutableArraySequence<StudentMark>* marks,
+    const MutableArraySequence<std::string>* students
+) {
+    auto studentAverageMarks = students->Map<std::pair<std::string, double>>(
+        [marks](const std::string& name) {
+                    auto* marksByStudent = marks->Where(
+                        [name](const StudentMark& mark_info) {
+                                return mark_info.name == name;
+                    });
+                    double mark = static_cast<double>(marksByStudent->Reduce<int>(
+                        [](int result, const StudentMark& current_mark) {
+                                    return current_mark.mark + result;
+                    }, 0)) / marksByStudent->GetLength();
+                    auto studentAverageMark = std::make_pair(name, mark);
+                    delete marksByStudent;
+                    return studentAverageMark;
+    });
+
+    studentAverageMarks->Sort(
+        [](const std::pair<std::string, double>& a, const std::pair<std::string, double>& b) {
+        return a.second < b.second;
+    });
+
+    return studentAverageMarks;
+}
+
+ ArraySequence<std::pair<std::string, double>>* getFilteredAndSortedStudentAverageMarks(
+    const MutableArraySequence<StudentMark>* marks,
+    const ArraySequence<std::pair<std::string, double>> *studentAverageMarks
+ ) {
     auto filteredStudentAverageMarks = studentAverageMarks->Where(
         [marks](const std::pair<std::string, double>& studentAverageMark) {
         auto marksForFilter = marks->Where(
@@ -151,16 +168,29 @@ int main() {
         return studentAverageMark.second < averageFilteredMark;
     });
 
-    std::cout << std::endl << "Топ 5 студентов со средним баллом ниже среднего арифметического балла среди студентов сдавших все дисциплины матан и физика на 4 и выше:" << std::endl;
-    for (int i = 0; i < 5; i++) {
-        auto mark = resultStudentAverageMarks->Get(i);
-        std::cout << mark.first << " (" << mark.second << ")" << std::endl;
-    }
+    delete filteredStudentAverageMarks;
+    return resultStudentAverageMarks;
+}
+
+int main() {
+    auto* marks = new MutableArraySequence<StudentMark>();
+    auto* students = new MutableArraySequence<std::string>();
+
+    fillSequences(marks, students);
+
+    auto studentAverageMarks = getStudentAverageMarksSorted(marks, students);
+    printTopStudentsWithAverageMarks("Топ 5 студентов с наивысшым средним баллом:", studentAverageMarks);
+
+    auto resultStudentAverageMarks =
+        getFilteredAndSortedStudentAverageMarks(marks, studentAverageMarks);
+    std::string message = "Топ 5 студентов со средним баллом ниже среднего арифметического балла среди "
+                          "студентов сдавших все дисциплины матан и физика на 4 и выше:";
+    printTopStudentsWithAverageMarks(message, resultStudentAverageMarks);
 
     delete studentAverageMarks;
     delete marks;
     delete students;
-    delete filteredStudentAverageMarks;
+    delete resultStudentAverageMarks;
 
 
 }

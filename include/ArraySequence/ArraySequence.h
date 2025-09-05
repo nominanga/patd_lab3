@@ -141,7 +141,7 @@ public:
     }
 
     template <typename U>
-    ArraySequence<U>* Map(std::function<U(T)> func)  {
+    ArraySequence<U>* Map(std::function<U(T)> func) const {
         auto seq = new ArraySequence<U>();
         for (int i = 0; i < data->GetSize(); i++) {
             seq->Append(func(data->Get(i)));
@@ -150,7 +150,7 @@ public:
     }
 
     template<typename U>
-    ArraySequence<U>* FlatMap(std::function<ArraySequence(T)> func)  {
+    ArraySequence<U>* FlatMap(std::function<ArraySequence(T)> func) const {
         auto result = new ArraySequence<U>();
         for (int i = 0; i < data->GetSize(); i++) {
             auto subSequence = func(data->Get(i));
@@ -162,7 +162,7 @@ public:
         return result;
     }
 
-    ArraySequence<T>* Where(std::function<bool(T)> func)  {
+    ArraySequence<T>* Where(std::function<bool(T)> func) const {
         auto seq = new ArraySequence<T>();
         for (int i = 0; i < data->GetSize(); i++) {
             if (T value = data->Get(i); func(value)) {
@@ -173,7 +173,7 @@ public:
     }
 
     template<typename U>
-    U Reduce(std::function<U(U, T)> func, U initial) {
+    U Reduce(std::function<U(U, T)> func, U initial) const {
         for (int i = 0; i < data->GetSize(); i++) {
             initial = func(initial, data->Get(i));
         }
